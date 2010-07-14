@@ -1025,9 +1025,26 @@ def problem_33():
                     product *= d2
     return product
                 
+def problem_44():
+    """
+    http://projecteuler.net/index.php?section=problems&id=44
+    """
+    def gen_pentagonal(n):
+        return (i*(3*i-1)/2 for i in xrange(1, n))
     
+    def is_pentagonal(pk):
+        i = (sqrt(24*pk + 1) + 1)/6.0
+        return i == int(i)
 
-                
+    plist = [i for i in gen_pentagonal(10000)]
+    print plist[-2:]
+    # print plist
+    for dis in xrange(1,len(plist)/2):
+        for j in xrange(len(plist) - dis):
+            s = plist[j] + plist[j+dis]
+            d = plist[j+dis] - plist[j]
+            if is_pentagonal(s) and is_pentagonal(d):
+                print j, j+dis, plist[j], plist[j+dis], s, d 
         
 if __name__ == '__main__':
     # print "Problem 01: ", problem_01()
@@ -1045,12 +1062,13 @@ if __name__ == '__main__':
     # print "Problem 18: ", problem_18()
     # print "Problem 22: ", problem_22()
     # print "Problem 26: ",  problem_26()
+    # print "Problem 33: ", problem_33()
     # print "Problem 36: ",  problem_36()
     # print "Problem 39: ",  problem_39()
+    # print "Problem 44: ", problem_44()
     # print "Problem 45: ",  problem_45()
     # print "Problem 50: ", problem_50(1000000)
     # print "Problem 67: ", problem_67()
     # print "Problem 9: ", problem_9()
-    print "Problem 33: ", problem_33()
     
     
