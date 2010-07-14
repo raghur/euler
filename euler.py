@@ -1005,6 +1005,28 @@ def problem_50(limit=1000000):
                 break
     return max_prime, max_chain
 
+def problem_33():
+    """
+    http://projecteuler.net/index.php?section=problems&id=33
+    """
+    product = 1
+    for numerator in xrange(11,100):
+        for denominator in xrange(numerator + 1,100):
+            num_digits = [int(i) for i in str(numerator)]
+            den_digits = [int(i) for i in str(denominator)]
+            common = filter(lambda(x) :  x in den_digits, num_digits)
+            if len(common) > 0 and common[0] <> 0:
+                num_digits.remove(common[0])
+                n2 = int(num_digits[0])
+                den_digits.remove(common[0])
+                d2 = float(den_digits[0])
+                if d2 <>0  and n2/d2 == numerator/float(denominator):
+                    print numerator, "/", denominator
+                    product *= d2
+    return product
+                
+    
+
                 
         
 if __name__ == '__main__':
@@ -1028,6 +1050,7 @@ if __name__ == '__main__':
     # print "Problem 36: ",  problem_36()
     # print "Problem 26: ",  problem_26()
     # print "Problem 45: ",  problem_45()
-    print "Problem 50: ", problem_50(1000000)
+    # print "Problem 50: ", problem_50(1000000)
+    print "Problem 33: ", problem_33()
     
     
