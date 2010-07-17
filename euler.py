@@ -506,7 +506,7 @@ def proper_divisors(n):
     facs = [i for i in prime_fac(n)]
     divisors = set()
     for n in xrange(1, len(facs)):
-        divisors = divisors.union([reduce(mul,list(t)) for t in [i for i in combinations(facs,n)]])
+        divisors = divisors.union([reduce(mul,list(t)) for t in [i for i in itertools.combinations(facs,n)]])
     return divisors.union([1])
 
 def problem_21():
@@ -691,6 +691,9 @@ def is_truncatable_prime(p):
         return prime == p
     else:
         return False
+
+
+
 
 def problem_40():
     """
@@ -1045,7 +1048,41 @@ def problem_44():
             d = plist[j+dis] - plist[j]
             if is_pentagonal(s) and is_pentagonal(d):
                 print j, j+dis, plist[j], plist[j+dis], s, d 
-        
+
+def sum_proper_divisors(n):
+    """
+    """
+    i, s = 2, 1
+    while i < int(sqrt(n)) + 1:
+        if n % i == 0:
+            s += i
+            if i <> n/i:
+                s += n/i
+        i +=1
+    
+    return s
+
+    
+
+
+def problem_23(limit=30000):
+    """
+    
+    """
+    def is_abundant(k):
+        return sum_proper_divisors(k) > k
+    abundant_list = filter(is_abundant, xrange(1,limit))
+    abundant_nos = set(abundant_list)
+    print 0 in abundant_nos
+    print len(abundant_list), abundant_list[1:10]
+    abundant_list = []
+    asum = 0
+    for candidate in xrange(1, limit):
+        if not any(((candidate - k) in abundant_nos for k in abundant_nos)):
+            print candidate
+            asum += candidate
+    return asum
+
 if __name__ == '__main__':
     # print "Problem 01: ", problem_01()
     # print "Problem 02: ", problem_02()
@@ -1070,5 +1107,4 @@ if __name__ == '__main__':
     # print "Problem 50: ", problem_50(1000000)
     # print "Problem 67: ", problem_67()
     # print "Problem 9: ", problem_9()
-    
-    
+    print "Problem 23: ", problem_23()
