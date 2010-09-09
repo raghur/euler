@@ -101,6 +101,13 @@ def prime_fac(n):
         else:
             i = i + 1
 
+def uniq(generator):
+    seen = set()
+    for i in generator:
+        if not i in seen:
+            seen.add(i)
+            yield i 
+
 def problem_01():
     """
     print sum of all multiples of 2 or 5 within 100.
@@ -1083,6 +1090,144 @@ def problem_23(limit=30000):
             asum += candidate
     return asum
 
+def problem_31(denominations=[1,2, 5,10, 20, 50, 100, 200], total = 200):
+    sum = 0
+    for l in xrange(1, len(denominations)):
+        c = itertools.combinations(denominations, l)
+        # matches = filter(lambda x: reduce(add, x) == total, c)
+        # print l, matches
+        # sum += len(matches)
+        lc = [k for k in c]
+        print "Possible sets of length %s" % l, lc, len(lc)
+        ways = [possible_sums(i, 200) for i in lc]
+        for t,w in itertools.izip(lc, ways):
+            print t, w
+        sum += reduce(add, ways)
+    return sum
+
+def possible_sums(l, total):
+    if len(l) == 0 or total ==0:
+        return 0
+    elif len(l) == 1:
+        if total % l[0] ==0:
+            return 1
+        else:
+            return 0
+    else:
+        s = 0
+        for i in xrange(1, total/l[-1]+1):
+            # print l[:-1], total - l[-1]*i
+            s += possible_sums(l[:-1], total - l[-1]*i)
+        # print l, total,  s
+        return s
+
+def problem_47(maxlen = 4):
+    found = False
+    i = 2*3*5*7 + 1
+    while not found:
+        # facs = [len([j for j in uniq(prime_fac(i+k))]) for k in xrange(0,maxlen)]
+        d = 4
+        for t in range(i+3, i-1 , -1):
+            k = len(list(uniq(prime_fac(t))))
+            if k  < 4:
+                i = t + 1
+                break
+            else:
+                d -= 1
+        if d ==0:
+            found = True
+            print list(xrange(i, i + maxlen))
+        if i % 1000 == 0:
+            print i
+
+from fractions import Fraction
+def problem_57(maxterms = 1000):
+    sNext = Fraction(3,2)
+    count = 0
+    for i in xrange(2, 1000):
+        sNext = 1 + 1/(1 + sNext)
+        if len(str(sNext.numerator)) > len(str(sNext.denominator)):
+            # print sNext
+            count += 1
+    return count
+
+def problem_58(pct = 0.10):
+    def spiral():
+        t, d =1, 1
+        while True:
+            for i in range(4):
+                yield t
+                t += d*2
+            d +=1
+    prime, total = 0, 0
+    last_term  = 1
+    for k in spiral():
+        if is_prime(k):
+            prime +=1
+        total +=1
+        if total % 1000 == 0:
+            print prime*1.0/total
+        if total >  13 and prime*1.0/total < pct:
+            return k - last_term + 1
+        last_term = k
+
+from operator import xor
+import sys
+
+def problem_59(cipherText = [79,59,12,2,79,35,8,28,20,2,3,68,8,9,68,45,0,12,9,67,68,4,7,5,23,27,1,21,79,85,78,79,85,71,38,10,71,27,12,2,79,6,2,8,13,9,1,13,9,8,68,19,7,1,71,56,11,21,11,68,6,3,22,2,14,0,30,79,1,31,6,23,19,10,0,73,79,44,2,79,19,6,28,68,16,6,16,15,79,35,8,11,72,71,14,10,3,79,12,2,79,19,6,28,68,32,0,0,73,79,86,71,39,1,71,24,5,20,79,13,9,79,16,15,10,68,5,10,3,14,1,10,14,1,3,71,24,13,19,7,68,32,0,0,73,79,87,71,39,1,71,12,22,2,14,16,2,11,68,2,25,1,21,22,16,15,6,10,0,79,16,15,10,22,2,79,13,20,65,68,41,0,16,15,6,10,0,79,1,31,6,23,19,28,68,19,7,5,19,79,12,2,79,0,14,11,10,64,27,68,10,14,15,2,65,68,83,79,40,14,9,1,71,6,16,20,10,8,1,79,19,6,28,68,14,1,68,15,6,9,75,79,5,9,11,68,19,7,13,20,79,8,14,9,1,71,8,13,17,10,23,71,3,13,0,7,16,71,27,11,71,10,18,2,29,29,8,1,1,73,79,81,71,59,12,2,79,8,14,8,12,19,79,23,15,6,10,2,28,68,19,7,22,8,26,3,15,79,16,15,10,68,3,14,22,12,1,1,20,28,72,71,14,10,3,79,16,15,10,68,3,14,22,12,1,1,20,28,68,4,14,10,71,1,1,17,10,22,71,10,28,19,6,10,0,26,13,20,7,68,14,27,74,71,89,68,32,0,0,71,28,1,9,27,68,45,0,12,9,79,16,15,10,68,37,14,20,19,6,23,19,79,83,71,27,11,71,27,1,11,3,68,2,25,1,21,22,11,9,10,68,6,13,11,18,27,68,19,7,1,71,3,13,0,7,16,71,28,11,71,27,12,6,27,68,2,25,1,21,22,11,9,10,68,10,6,3,15,27,68,5,10,8,14,10,18,2,79,6,2,12,5,18,28,1,71,0,2,71,7,13,20,79,16,2,28,16,14,2,11,9,22,74,71,87,68,45,0,12,9,79,12,14,2,23,2,3,2,71,24,5,20,79,10,8,27,68,19,7,1,71,3,13,0,7,16,92,79,12,2,79,19,6,28,68,8,1,8,30,79,5,71,24,13,19,1,1,20,28,68,19,0,68,19,7,1,71,3,13,0,7,16,73,79,93,71,59,12,2,79,11,9,10,68,16,7,11,71,6,23,71,27,12,2,79,16,21,26,1,71,3,13,0,7,16,75,79,19,15,0,68,0,6,18,2,28,68,11,6,3,15,27,68,19,0,68,2,25,1,21,22,11,9,10,72,71,24,5,20,79,3,8,6,10,0,79,16,8,79,7,8,2,1,71,6,10,19,0,68,19,7,1,71,24,11,21,3,0,73,79,85,87,79,38,18,27,68,6,3,16,15,0,17,0,7,68,19,7,1,71,24,11,21,3,0,71,24,5,20,79,9,6,11,1,71,27,12,21,0,17,0,7,68,15,6,9,75,79,16,15,10,68,16,0,22,11,11,68,3,6,0,9,72,16,71,29,1,4,0,3,9,6,30,2,79,12,14,2,68,16,7,1,9,79,12,2,79,7,6,2,1,73,79,85,86,79,33,17,10,10,71,6,10,71,7,13,20,79,11,16,1,68,11,14,10,3,79,5,9,11,68,6,2,11,9,8,68,15,6,23,71,0,19,9,79,20,2,0,20,11,10,72,71,7,1,71,24,5,20,79,10,8,27,68,6,12,7,2,31,16,2,11,74,71,94,86,71,45,17,19,79,16,8,79,5,11,3,68,16,7,11,71,13,1,11,6,1,17,10,0,71,7,13,10,79,5,9,11,68,6,12,7,2,31,16,2,11,68,15,6,9,75,79,12,2,79,3,6,25,1,71,27,12,2,79,22,14,8,12,19,79,16,8,79,6,2,12,11,10,10,68,4,7,13,11,11,22,2,1,68,8,9,68,32,0,0,73,79,85,84,79,48,15,10,29,71,14,22,2,79,22,2,13,11,21,1,69,71,59,12,14,28,68,14,28,68,9,0,16,71,14,68,23,7,29,20,6,7,6,3,68,5,6,22,19,7,68,21,10,23,18,3,16,14,1,3,71,9,22,8,2,68,15,26,9,6,1,68,23,14,23,20,6,11,9,79,11,21,79,20,11,14,10,75,79,16,15,6,23,71,29,1,5,6,22,19,7,68,4,0,9,2,28,68,1,29,11,10,79,35,8,11,74,86,91,68,52,0,68,19,7,1,71,56,11,21,11,68,5,10,7,6,2,1,71,7,17,10,14,10,71,14,10,3,79,8,14,25,1,3,79,12,2,29,1,71,0,10,71,10,5,21,27,12,71,14,9,8,1,3,71,26,23,73,79,44,2,79,19,6,28,68,1,26,8,11,79,11,1,79,17,9,9,5,14,3,13,9,8,68,11,0,18,2,79,5,9,11,68,1,14,13,19,7,2,18,3,10,2,28,23,73,79,37,9,11,68,16,10,68,15,14,18,2,79,23,2,10,10,71,7,13,20,79,3,11,0,22,30,67,68,19,7,1,71,8,8,8,29,29,71,0,2,71,27,12,2,79,11,9,3,29,71,60,11,9,79,11,1,79,16,15,10,68,33,14,16,15,10,22,73]):
+    searchTerms = [' to ', ' the ', ' a ', ' and ', ' that ']
+    # found = False
+    # count = 0
+    # while not found:
+    #     print 'how did I get here'
+    #     for key in itertools.permutations("abcdefghijklmnopqrstuvwxyz", 3):
+    #         count += 1
+    #         if count %1000 == 0:
+    #             print count
+    #         ciphKey = [ord(i) for i in ''.join(list(key))*(len(cipherText)+3/3)]
+    #         decrypt = ''.join([chr(xor(cipherText[i], ciphKey[i])) for i in cipherText])
+    #         if not any( (c in decrypt for c in "@#%^*<>:{}=|~`")):
+    #             score = 0
+    #             for t in searchTerms:
+    #                 if t in decrypt:
+    #                     score +=1
+    #             if score > 2:
+    #                 print key, decrypt
+    #                 print 'Found'
+    #                 found = True
+    #                 break
+    #     found = True
+    ca,cb,cc = ord('a'), ord('a'), ord('a')
+    found = False
+    while not found:
+        i =0
+        print 'Trying key ', ''.join([chr(ca), chr(cb), chr(cc)])
+        for i  in xrange(0, len(cipherText) - 2, 3):
+            if xor(cipherText[i], ca) in xrange(65, 123):
+                if xor(cipherText[i+1], cb) in xrange(65, 123):
+                    if xor(cipherText[i+2], cc) in xrange(65, 123):
+                        continue
+                    else:
+                        cc +=1
+                        break
+                else:
+                    cb +=1
+                    break
+            else:
+                ca +=1
+                break
+        print i
+        if i == len(cipherText) - 3:
+            found = True
+            key =  ''.join([chr(ca), chr(cb), chr(cc)])
+            print key
+    return key
+
+                
+                    
+    
+
+        
 if __name__ == '__main__':
     # print "Problem 01: ", problem_01()
     # print "Problem 02: ", problem_02()
@@ -1107,4 +1252,9 @@ if __name__ == '__main__':
     # print "Problem 50: ", problem_50(1000000)
     # print "Problem 67: ", problem_67()
     # print "Problem 9: ", problem_9()
-    print "Problem 23: ", problem_23()
+    # print "Problem 23: ", problem_23()
+    # print "Problem 31: ", problem_31()
+    print "Problem 47: ", problem_47()
+    # print "Problem 57: ", problem_57()
+    # print "Problem 58: ", problem_58()
+    # print "Problem 59: ", problem_59()
