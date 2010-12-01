@@ -17,7 +17,9 @@ def is_prime(n):
     """
     if n ==1:
         return False
-    for i in xrange(2, int(sqrt(n)+1)):
+    elif n % 2 == 0:
+        return False
+    for i in xrange(3, int(sqrt(n)+1), 2):
         if n%i ==0:
             return False
     return True
@@ -1192,6 +1194,27 @@ def problem_27():
                 a_final, b_final = a, b
     return  maxchain, a_final, b_final, a_final*b_final
         
+def problem_46():
+    """What is the smallest odd composite that cannot be written as the sum of a prime and twice a square?
+    """
+    i = 9
+    while True:
+        while is_prime(i):
+            i+=2
+        found = False
+        for j in xrange(i-2, 0, -2):
+            if not is_prime(j):
+                continue
+            square = (i-j)/2
+            if int(sqrt(square)) == sqrt(square):
+                # print "%s=%s + 2 X %s^2" % (i,j, sqrt(square))
+                i += 2
+                found = True
+                break
+        if not found:
+            return i
+
+
 if __name__ == '__main__':
     # print "Problem 01: ", problem_01()
     # print "Problem 02: ", problem_02()
@@ -1221,4 +1244,5 @@ if __name__ == '__main__':
     # print "Problem 47: ", problem_47()
     # print "Problem 57: ", problem_57()
     # print "Problem 58: ", problem_58()
-    print "Problem 27: ", problem_27()
+    # print "Problem 27: ", problem_27()
+    print "Problem 46: ", problem_46()
