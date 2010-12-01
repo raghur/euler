@@ -1171,6 +1171,26 @@ def problem_58(pct = 0.10):
             return k - last_term + 1
         last_term = k
 
+def problem_27():
+    """Find the product of the coefficients, a and b, for
+    the quadratic n^2 +an +b expression that produces the maximum 
+    number of primes for consecutive values of n, starting with n = 0.
+    """
+    maxchain, a_final, b_final  = 0,0,0
+    for a in xrange(-1000, 1001):
+        for b in xrange(-1000, 1001):
+            l, n = 0,0
+            while True:
+                v = n*n + a*n +b
+                if v > 0 and is_prime(v):
+                    n = n+1
+                    l = l + 1
+                else:
+                    break
+            if n > maxchain:
+                maxchain = n
+                a_final, b_final = a, b
+    return  maxchain, a_final, b_final, a_final*b_final
         
 if __name__ == '__main__':
     # print "Problem 01: ", problem_01()
@@ -1198,6 +1218,7 @@ if __name__ == '__main__':
     # print "Problem 9: ", problem_9()
     # print "Problem 23: ", problem_23()
     # print "Problem 31: ", problem_31()
-    print "Problem 47: ", problem_47()
+    # print "Problem 47: ", problem_47()
     # print "Problem 57: ", problem_57()
     # print "Problem 58: ", problem_58()
+    print "Problem 27: ", problem_27()
