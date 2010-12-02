@@ -1214,7 +1214,49 @@ def problem_46():
         if not found:
             return i
 
+def problem_92():
+    """
+A number chain is created by continuously adding the square of the digits in a number to form a new number until it has been seen before.
 
+For example,
+
+44  32  13  10  1  1
+85  89  145  42  20  4  16  37  58  89
+
+Therefore any chain that arrives at 1 or 89 will become stuck in an endless loop. What is most amazing is that EVERY starting number will eventually arrive at 1 or 89.
+
+How many starting numbers below ten million will arrive at 89?
+    """
+    def nextTerm(k):
+        sum = 0
+        while k > 0:
+            digit = k % 10
+            sum += digit*digit
+            k = k /10
+        return sum
+
+    count = 0
+    endSet1 = set([1])
+    # print endSet1,endSet89, 1 in endSet1, tempSet, 2 in endSet1
+    for i  in xrange (1, 10000000):
+        finished = False
+        n = i
+        while not finished:
+            if n in endSet1:
+                endSet1.add(i)
+                finished = True
+            elif n < i and not n in endSet1:
+                count += 1
+                finished = True
+            elif n == 89:
+                finished = True
+                count += 1
+            else:
+                # n = reduce(add, [int(d)*int(d) for d in str(n)])
+                n = nextTerm(n)
+    # print len(endSet1), len(endSet89)
+    return count
+    
 if __name__ == '__main__':
     # print "Problem 01: ", problem_01()
     # print "Problem 02: ", problem_02()
@@ -1245,4 +1287,5 @@ if __name__ == '__main__':
     # print "Problem 57: ", problem_57()
     # print "Problem 58: ", problem_58()
     # print "Problem 27: ", problem_27()
-    print "Problem 46: ", problem_46()
+    # print "Problem 46: ", problem_46()
+    print "Problem 92: ", problem_92()
