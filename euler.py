@@ -4,6 +4,21 @@ from operator import add, mul
 import operator
 from datetime import datetime
 import itertools
+import time
+
+def timeit(method):
+
+    def timed(*args, **kw):
+        ts = time.time()
+        result = method(*args, **kw)
+        te = time.time()
+
+        print '%r (%r, %r) %2.2f sec' % \
+              (method.__name__, args, kw, te-ts)
+        return result
+
+    return timed
+
 def fibo(n):
     if n == 0 or n ==1:
         return 1
@@ -83,6 +98,26 @@ def prime_sieve(max):
         i = i +1
     return [i for i in primes if i != 0]
 
+def prime_sieve_generator(max_ceil):
+    """docstring for prime_sieve_generator"""
+    if (max_ceil is not None and  max_ceil < 2):
+        return
+    yield 2
+    found_primes = [2]
+    if (not max_ceil is None and max_ceil > 3):
+        yield 3
+        found_primes.append(3)
+    next_prime = max(found_primes) + 2
+    while  max_ceil is None or next_prime < max_ceil:
+        j = 0
+        while (found_primes[j] <  sqrt(next_prime) \
+                and next_prime % found_primes[j] != 0):
+            j = j + 1
+        if next_prime % found_primes[j] != 0:
+            yield next_prime
+            found_primes.append(next_prime)
+        next_prime = next_prime + 2
+
 def gen_series_until_max(gen,maxval):
     i = 0
     v = gen(i)
@@ -99,7 +134,7 @@ def prime_fac(n):
         if n % i ==0:
             yield i
             n = n / i
-	    maxval = n + 1
+            maxval = n + 1
         else:
             i = i + 1
 
@@ -880,8 +915,6 @@ def problem_81(filename="matrix.txt"):
             matrix[i][j] += min(matrix[i+1][j], matrix[i][j+1])
     return matrix[0][0]
 
-def problem_82(filename="problem_82.txt"):
-    matrix = [eval("[" + line.strip() + "]") for line in open(filename,"r")]
 
 def problem_9():
     """ Find the only Pythagorean triplet, {a, b, c}, for which a + b + c = 1000."""
@@ -1257,6 +1290,61 @@ How many starting numbers below ten million will arrive at 89?
     # print len(endSet1), len(endSet89)
     return count
     
+@timeit
+def problem_82(filename="problem_82.txt"):
+    matrix = [eval("[" + line.strip() + "]") for line in open(filename,"r")]
+    print matrix
+    return 20
+
+@timeit
+def problem_60():
+    """
+    This one doesnt finish in the 1 min window. Takes forever and since I'm printing out values,
+    I need to read out the values. Given the answer below, I could stop at 10,000 - but that's a 
+    magic number
+    13,5197, 5701, 6733, 8389
+    Also, I have returned at the first match - which also is probably not quite correct.
+    """
+    def num_digits(n):
+        digits = 1
+        while (n/(10**digits) != 0):
+            digits = digits + 1
+        return digits
+    def check_pair(first, second):
+        return is_prime(first*10**num_digits(second) + second) and \
+                    is_prime(second*10**num_digits(first) + first)
+
+    generated_primes = [i for i in prime_sieve(10000) if i > 2]
+
+    for i in xrange(len(generated_primes) - 5):
+        p1 = generated_primes[i]
+        for j in xrange(i + 1, len(generated_primes)):
+            p2 = generated_primes[j]
+            if check_pair(p1, p2):
+                for k in xrange(j + 1, len(generated_primes)):
+                    p3 = generated_primes[k]
+                    if check_pair(p1,p3) and check_pair(p2,p3):
+                        for l in xrange(k +  1, len(generated_primes)):
+                            p4 = generated_primes[l]
+                            if check_pair(p4, p1) \
+                                    and check_pair(p4, p2) \
+                                    and check_pair(p4, p3):
+                                #print p1, p2, p3, p4
+                                for m in xrange(l + 1, len(generated_primes)):
+                                    p5 = generated_primes[m]
+                                    if check_pair(p5, p1) \
+                                            and check_pair(p5, p2) \
+                                            and check_pair(p5, p3) \
+                                            and check_pair(p5, p4):
+                                        return p1, p2, p3,p4,p5
+
+    #for prime in generated_primes:
+        #found = check_concatenation(given_primes, prime)
+        #if found:
+            #break
+    #return given_primes.append(prime)
+
+
 if __name__ == '__main__':
     # print "Problem 01: ", problem_01()
     # print "Problem 02: ", problem_02()
@@ -1288,4 +1376,6 @@ if __name__ == '__main__':
     # print "Problem 58: ", problem_58()
     # print "Problem 27: ", problem_27()
     # print "Problem 46: ", problem_46()
-    print "Problem 92: ", problem_92()
+    # print "Problem 92: ", problem_92()
+    # print "Problem 60: ", problem_60()
+    # print "Problem 82: ", problem_82()
