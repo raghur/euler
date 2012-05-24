@@ -39,6 +39,12 @@ def is_prime(n):
             return False
     return True
 
+def num_digits(n):
+    digits = 1
+    while (n/(10**digits) != 0):
+        digits = digits + 1
+    return digits
+
 def mingt(seq, mv):
     """ find minimum in seq which is greater than min"""
     # print seq, mv
@@ -270,14 +276,14 @@ def problem_08():
             maxsubstr = num
     return maxsubstr, maxproduct
 
-def problem_09(target):
-    """
+#def problem_09(target):
+    #"""
     
-    Arguments:
-    - `target`:
-    """
-    c2 = [(i, i**2) for i in range(1, target+1)]
-    print c2
+    #Arguments:
+    #- `target`:
+    #"""
+    #c2 = [(i, i**2) for i in range(1, target+1)]
+    #print c2
 
 def problem_10(max):
     """
@@ -841,20 +847,21 @@ def problem_49():
             yield i,j,k
 
 def problem_52():
-    """
-    """
-    n = 1
-    while True:
-        p = [n*i for i in xrange(1, 7)]
-        found = True
-        for i in xrange(len(p) - 2):
-            if not is_permutation(p[i], p[i+1]):
-                found = False
+    """This is a better solution to 52"""
+    mul_range = [1, 2,3,4,5,6]
+    for i in xrange(1, 1000000):
+        if (num_digits(6*i) != num_digits(i)):
+            continue
+        digits = set(digit_gen(i))
+        breakout = False
+        for j in  mul_range[1:]:
+            if digits != set(digit_gen(j*i)):
+                breakout = True
                 break
-        if found:
-            print n
-            break
-        n += 1
+        if not breakout:
+            print [i*k for k in mul_range]
+            return
+
 
 def problem_53():
     total = 0
@@ -916,7 +923,7 @@ def problem_81(filename="matrix.txt"):
     return matrix[0][0]
 
 
-def problem_9():
+def problem_09():
     """ Find the only Pythagorean triplet, {a, b, c}, for which a + b + c = 1000."""
     for a in xrange(1,1000):
         for b in xrange(1,1000):
@@ -1305,11 +1312,6 @@ def problem_60():
     13,5197, 5701, 6733, 8389
     Also, I have returned at the first match - which also is probably not quite correct.
     """
-    def num_digits(n):
-        digits = 1
-        while (n/(10**digits) != 0):
-            digits = digits + 1
-        return digits
     def check_pair(first, second):
         return is_prime(first*10**num_digits(second) + second) and \
                     is_prime(second*10**num_digits(first) + first)
@@ -1338,13 +1340,96 @@ def problem_60():
                                             and check_pair(p5, p4):
                                         return p1, p2, p3,p4,p5
 
-    #for prime in generated_primes:
-        #found = check_concatenation(given_primes, prime)
-        #if found:
-            #break
-    #return given_primes.append(prime)
+
+def digit_gen(n):
+    while n > 0:
+        r = n % 10
+        n = n/10
+        yield r
 
 
+@timeit
+def problem_51():
+    """Problem 51:
+By replacing the 1st digit of *3, it turns out that six of the nine possible
+values: 13, 23, 43, 53, 73, and 83, are all prime.
+
+By replacing the 3rd and 4th digits of 56**3 with the same digit, this
+5-digit number is the first example having seven primes among the ten
+generated numbers, yielding the family: 56003, 56113, 56333, 56443, 56663,
+56773, and 56993. Consequently 56003, being the first member of this family,
+is the smallest prime with this property.
+
+Find the smallest prime which, by replacing part of the number (not
+        necessarily adjacent digits) with the same digit, is part of an
+eight prime value family.  """
+
+
+    def diff_digits(l,y, limit):
+        """ for every number num in the list l, check if exactly `l` digits 
+        are different between y and num, and also ensure that its the same
+        two numbers that are different each time.
+        """
+        for num in l:
+            lastdiff = None
+            diffcount = 0
+            for i, j in zip(digit_gen(num), digit_gen(y)):
+                if i != j:
+                    diffcount = diffcount + 1
+                    if lastdiff is None :
+                    	lastdiff = i
+                    elif lastdiff != i:
+                        return False
+                    if diffcount > limit:
+                        return False
+        if diffcount < limit:
+        	return False
+        return True
+    def uniq_digits(k):
+        s = set()
+        for d in digit_gen(k):
+            s.add(d)
+        return len(s)
+    primes = [i for i in prime_sieve_generator(1000000) if i > 100000 and uniq_digits(i) == 4]
+    print len(primes)
+    return
+    chains = list()
+    start = 0
+    while start < len(primes):
+        next_prime = start + 1
+        chain = list([primes[start]])
+        while next_prime < len(primes):
+# and num_digits(primes[start]) == num_digits(primes[next_prime ]):
+            if diff_digits(chain,primes[next_prime ], 2):
+                chain.append(primes[next_prime])
+            next_prime  = next_prime  + 1
+        if len(chain) > 6:
+            chains.append(chain)
+        start = start + 1
+    print chains
+
+def problem_59(file):
+    """XOR encryption
+    
+    :file: @todo
+    :returns: @todo
+    """
+    
+    bytes=eval('[' +  open(file, "r").read() + ']')
+    decrypt = []
+    for w in xrange(ord('a'), ord('z')+1):
+        pos = 0
+    	char = chr(bytes[pos] ^ w)
+        for x in xrange(ord('a'), ord('z')+1):
+        	decrypt.push(char)
+        	pos = pos + 1
+            char = chr(bytes[pos] ^ x)
+            if char >= 'A' and char <= 'Z':
+            	decrypt.push(char)
+            	pos = pos + 1
+                for y in "abcdefghijklmnopqrstuvwxyz":
+
+    
 if __name__ == '__main__':
     # print "Problem 01: ", problem_01()
     # print "Problem 02: ", problem_02()
@@ -1353,29 +1438,30 @@ if __name__ == '__main__':
     # print "Problem 06: ", problem_06(100)
     # print "Problem 07: ", problem_07(10001)
     # print "Problem 08: ", problem_08()
-    # print "Problem 09: ", problem_09(1000)
+    # print "Problem 09: ", problem_09()
     # print "Problem 10: ", problem_10(20000)
     # print "Problem 11: ", problem_11()
     # print "Problem 13: ", problem_13()
     # print "Problem 14: ", problem_14(1000000)
     # print "Problem 18: ", problem_18()
     # print "Problem 22: ", problem_22()
+    # print "Problem 23: ", problem_23()
     # print "Problem 26: ",  problem_26()
+    # print "Problem 27: ", problem_27()
+    # print "Problem 31: ", problem_31()
     # print "Problem 33: ", problem_33()
     # print "Problem 36: ",  problem_36()
     # print "Problem 39: ",  problem_39()
     # print "Problem 44: ", problem_44()
     # print "Problem 45: ",  problem_45()
-    # print "Problem 50: ", problem_50(1000000)
-    # print "Problem 67: ", problem_67()
-    # print "Problem 9: ", problem_9()
-    # print "Problem 23: ", problem_23()
-    # print "Problem 31: ", problem_31()
+    # print "Problem 46: ", problem_46()
     # print "Problem 47: ", problem_47()
+    # print "Problem 50: ", problem_50(1000000)
+    # print "Problem 51: ", problem_51()
     # print "Problem 57: ", problem_57()
     # print "Problem 58: ", problem_58()
-    # print "Problem 27: ", problem_27()
-    # print "Problem 46: ", problem_46()
-    # print "Problem 92: ", problem_92()
     # print "Problem 60: ", problem_60()
+    # print "Problem 67: ", problem_67()
     # print "Problem 82: ", problem_82()
+    # print "Problem 92: ", problem_92()
+    pass
