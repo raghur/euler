@@ -1,5 +1,4 @@
 #! /usr/bin/python
-#! /usr/bin/python
 from math import sqrt, log, pow
 from operator import add, mul
 import operator
@@ -1495,8 +1494,9 @@ if __name__ == '__main__':
     # print "Problem 51: ", problem_51()
     # print "Problem 57: ", problem_57()
     # print "Problem 58: ", problem_58()
-    # print "Problem 27: ", problem_27()
-    # print "Problem 46: ", problem_46()
-    #print "Problem 92: ", problem_92()
     print "Problem 59: ", problem_59()
+    # print "Problem 60: ", problem_60()
+    # print "Problem 67: ", problem_67()
+    # print "Problem 82: ", problem_82()
+    # print "Problem 92: ", problem_92()
 
