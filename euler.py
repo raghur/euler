@@ -1,9 +1,11 @@
 #! /usr/bin/python
+#! /usr/bin/python
 from math import sqrt, log, pow
 from operator import add, mul
 import operator
 from datetime import datetime
 import itertools
+import sys
 import time
 
 def timeit(method):
@@ -1296,6 +1298,39 @@ How many starting numbers below ten million will arrive at 89?
                 n = nextTerm(n)
     # print len(endSet1), len(endSet89)
     return count
+
+def problem_59(filename="cipher1.txt"):
+    """@todo: Docstring for problem_59
+
+    :filename: @todo
+    :returns: @todo
+
+    """
+    byteArr = eval ("[" + open(filename, "r").read() + "]")
+    key = []
+    for pos in xrange(0,3):
+        keychar = 0
+        maxval = 0
+        for k in xrange(ord("a"), ord("z")+1):
+            count = 0
+            for c in xrange (pos, len(byteArr), 3):
+                char = byteArr[c] ^ k
+                if char >= ord('A') and char <= ord('Z') \
+                    or char >= ord('a') and char <= ord('z'):
+                        count = count + 1
+            if count > maxval:
+                maxval, keychar = count, k
+        print pos, maxval, chr(keychar)
+        key.append(keychar)
+    sum_ascii = 0
+    for idx, val in enumerate(byteArr):
+    	sys.stdout.write (chr(val ^ key[idx % 3]))
+    	sum_ascii = sum_ascii + (val ^ key[idx % 3])
+    return sum_ascii
+
+
+
+
     
 @timeit
 def problem_82(filename="problem_82.txt"):
@@ -1460,8 +1495,8 @@ if __name__ == '__main__':
     # print "Problem 51: ", problem_51()
     # print "Problem 57: ", problem_57()
     # print "Problem 58: ", problem_58()
-    # print "Problem 60: ", problem_60()
-    # print "Problem 67: ", problem_67()
-    # print "Problem 82: ", problem_82()
-    # print "Problem 92: ", problem_92()
-    pass
+    # print "Problem 27: ", problem_27()
+    # print "Problem 46: ", problem_46()
+    #print "Problem 92: ", problem_92()
+    print "Problem 59: ", problem_59()
+
