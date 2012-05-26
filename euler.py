@@ -1,5 +1,5 @@
 #! /usr/bin/python
-from math import sqrt, log, pow
+from math import sqrt, log, pow, log10, floor
 from operator import add, mul
 import operator
 from datetime import datetime
@@ -41,10 +41,7 @@ def is_prime(n):
     return True
 
 def num_digits(n):
-    digits = 1
-    while (n/(10**digits) != 0):
-        digits = digits + 1
-    return digits
+    return floor(log10(n)) + 1
 
 def mingt(seq, mv):
     """ find minimum in seq which is greater than min"""
@@ -1442,28 +1439,27 @@ eight prime value family.  """
         start = start + 1
     print chains
 
-def problem_59(file):
-    """XOR encryption
-    
-    :file: @todo
-    :returns: @todo
-    """
-    
-    bytes=eval('[' +  open(file, "r").read() + ']')
-    decrypt = []
-    for w in xrange(ord('a'), ord('z')+1):
-        pos = 0
-    	char = chr(bytes[pos] ^ w)
-        for x in xrange(ord('a'), ord('z')+1):
-        	decrypt.push(char)
-        	pos = pos + 1
-            char = chr(bytes[pos] ^ x)
-            if char >= 'A' and char <= 'Z':
-            	decrypt.push(char)
-            	pos = pos + 1
-                for y in "abcdefghijklmnopqrstuvwxyz":
 
-    
+def problem_63():
+    """How many n digit numbers exist that are also an nth power
+    :returns: Count satisfying above.
+    """
+    count = 0
+    power = 1
+    exit = False
+    while not exit:
+        exit = True
+        for num in xrange(1, 10):
+            digitCount = num_digits(num**power)
+            if digitCount == power:
+                count += 1
+                print count, num, power, num**power
+                exit =False
+            elif digitCount > power:
+                break
+        power += 1
+    return count
+
 if __name__ == '__main__':
     # print "Problem 01: ", problem_01()
     # print "Problem 02: ", problem_02()
@@ -1494,8 +1490,9 @@ if __name__ == '__main__':
     # print "Problem 51: ", problem_51()
     # print "Problem 57: ", problem_57()
     # print "Problem 58: ", problem_58()
-    print "Problem 59: ", problem_59()
+    # print "Problem 59: ", problem_59()
     # print "Problem 60: ", problem_60()
+    print "Problem 63: ", problem_63()
     # print "Problem 67: ", problem_67()
     # print "Problem 82: ", problem_82()
     # print "Problem 92: ", problem_92()
