@@ -1233,8 +1233,10 @@ def problem_27():
                 a_final, b_final = a, b
     return  maxchain, a_final, b_final, a_final*b_final
         
-def problem_46():
-    """What is the smallest odd composite that cannot be written as the sum of a prime and twice a square?
+def problem_46():     
+    """     
+    What is the smallest odd composite that cannot be
+    written as the sum of a prime and twice a square?
     """
     i = 9
     while True:
@@ -1253,48 +1255,41 @@ def problem_46():
         if not found:
             return i
 
-def problem_92():
-    """
-A number chain is created by continuously adding the square of the digits in a number to form a new number until it has been seen before.
+@timeit
+def problem_92(max = 10**6):     
+    """ A number chain is created by continuously adding the
+square of the digits in a number to form a new number until it has been seen
+before.
 
 For example,
 
 44  32  13  10  1  1
 85  89  145  42  20  4  16  37  58  89
 
-Therefore any chain that arrives at 1 or 89 will become stuck in an endless loop. What is most amazing is that EVERY starting number will eventually arrive at 1 or 89.
+Therefore any chain that arrives at 1 or 89 will become stuck in an endless
+loop. What is most amazing is that EVERY starting number will eventually arrive
+at 1 or 89.
 
 How many starting numbers below ten million will arrive at 89?
     """
-    def nextTerm(k):
-        sum = 0
-        while k > 0:
-            digit = k % 10
-            sum += digit*digit
-            k = k /10
-        return sum
+    def next_term(k):
+        return sum([i**2 for i in digit_gen(k)])
 
-    count = 0
-    endSet1 = set([1])
-    # print endSet1,endSet89, 1 in endSet1, tempSet, 2 in endSet1
-    for i  in xrange (1, 10000000):
-        finished = False
-        n = i
-        while not finished:
-            if n in endSet1:
-                endSet1.add(i)
-                finished = True
-            elif n < i and not n in endSet1:
-                count += 1
-                finished = True
-            elif n == 89:
-                finished = True
-                count += 1
+    seen_chains = {1 : set(), 89 : set()}
+    for j in xrange(1, max):
+        done = False
+        start = j
+        while not done:
+            if start in seen_chains[1] or start == 1:
+                seen_chains[1].add(j)
+                done=True
+            elif start in seen_chains[89] or start == 89:
+                seen_chains[89].add(j)
+                done = True
             else:
-                # n = reduce(add, [int(d)*int(d) for d in str(n)])
-                n = nextTerm(n)
-    # print len(endSet1), len(endSet89)
-    return count
+                start = next_term(start)
+    # print seen_chains
+    return len(seen_chains[89])
 
 def problem_59(filename="cipher1.txt"):
     """@todo: Docstring for problem_59
@@ -1532,5 +1527,5 @@ if __name__ == '__main__':
     # print "Problem 67: ", problem_67()
     print "Problem 79: ", problem_79()
     # print "Problem 82: ", problem_82()
-    # print "Problem 92: ", problem_92()
+    print "Problem 92: ", problem_92(10 ** 7)
 
