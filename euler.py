@@ -1,4 +1,5 @@
 #! /usr/bin/python
+# -*- coding: utf-8 -*-
 from math import sqrt, log, pow, log10, floor
 from operator import add, mul
 import operator
@@ -1460,6 +1461,41 @@ def problem_63():
         power += 1
     return count
 
+def problem_69():     
+    """     Euler's Totient function, φ(n) [sometimes called
+    the phi function], is used to determine the number of numbers less than n
+    which are relatively prime to n. For example, as 1, 2, 4, 5, 7, and 8, are all
+    less than nine and relatively prime to nine, φ(9)=6.     
+    """
+    pass
+
+def problem_79(filename="keylog.txt"):
+    fh = open(filename, "r") 
+    graph = {}
+    for line in fh:
+        line = line.strip()
+        for i,d in enumerate(line):
+            if d not in graph:
+                graph[d] = {"prev": set(), "next":set()}
+            map(lambda x: graph[d]["prev"].add(x), (k for k in line[:i] ))
+            map(lambda x: graph[d]["next"].add(x), (k for k in line[i+1:] ))
+
+    # for k,v in graph.items():
+    #     print k
+    #     for k2,v2 in v.items():
+    #         print k2, v2
+    prev = set()
+    num = ""
+    while len(graph) > 0:
+        for k,v in graph.items():
+            if v["prev"] == prev:
+                prev.add(k)
+                num += k
+                del graph[k]
+    return num
+
+
+
 if __name__ == '__main__':
     # print "Problem 01: ", problem_01()
     # print "Problem 02: ", problem_02()
@@ -1492,8 +1528,9 @@ if __name__ == '__main__':
     # print "Problem 58: ", problem_58()
     # print "Problem 59: ", problem_59()
     # print "Problem 60: ", problem_60()
-    print "Problem 63: ", problem_63()
+    # print "Problem 63: ", problem_63()
     # print "Problem 67: ", problem_67()
+    print "Problem 79: ", problem_79()
     # print "Problem 82: ", problem_82()
     # print "Problem 92: ", problem_92()
 
